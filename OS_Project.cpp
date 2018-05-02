@@ -237,7 +237,7 @@ void SCAN ( set<int> s  ) //version update
 
 
 
-void CSCAN(set<int> s)
+void CSCAN(set<int> s) //?????
 {
 	cout <<"\n\nCSCAN:\n";
 	init();
@@ -246,12 +246,12 @@ void CSCAN(set<int> s)
 	order.push_back( *cur );
 	set<int>::iterator initial = prev(cur,1);
 	bool flag = false;
+	s.insert(0);
 	while(1)
 	{
-		s.insert(0);
 		for(set<int>::iterator it = initial; it != --s.begin(); it--)
 		{
-			if( s.size() == 2)
+			if( s.size() == 2 && *(prev( cur, 1)) == 0 )
 			{
 				flag = true;
 				break;
@@ -265,6 +265,7 @@ void CSCAN(set<int> s)
 			
 			s.erase( cur );
 			cur = it;
+			s.insert(0);			
 		}
 		
 		if( flag == true)
@@ -285,57 +286,38 @@ void LOOK( set<int> s )
 	
 	set<int>::iterator cur = s.find( listInput[0] );
 	order.push_back(*cur);
-	bool flag = false;
 	
- while(1)
- {
-
-	set<int>::iterator initial = prev(cur,1);
-	for(set<int>::iterator it = initial; it != --s.begin(); it--)
+	while ( s.size() != 1 )
 	{
-		if( s.size() == 2)
+		set<int>::iterator initial = prev(cur, 1);
+		for(set<int>::iterator it = initial; it != --s.begin(); it--)
 		{
-			flag = true;
+			int now = *it;
+			int d = *cur - now;
+			order.push_back(now);
+			dis.push_back(d);
+			cost+=d;
+		
+			s.erase(cur);
+			cur = it;	
+		}
+		if( s.size() == 1 )
 			break;
+		initial = next( cur, 1 );
+		for( set<int>::iterator it = initial; it != s.end(); it++)
+		{
+			int now = *it;
+			int d = now - *cur;
+			order.push_back(now);
+			dis.push_back(d);
+			cost+=d;
+		
+			s.erase(cur);
+			cur = it;
 		}
 		
-		int now = *it;
-		int d = *cur - now;
-		order.push_back(now);
-		dis.push_back(d);
-		cost+=d;
-		
-		s.erase(cur);
-		cur = it;
 	}
-	if( flag == true)
-		break;
-	
-	
-
-	initial = next( cur, 1);
-	for(set<int>::iterator it = initial; it != s.end(); it++)
-	{
-		if( s.size() == 2)
-		{
-			flag = true;
-			break;
-		}
-			
-		int now = *it;
-		int d = now - *cur;
-		order.push_back(now);
-		dis.push_back(d);
-		cost+=d;
-		
-		s.erase(cur);
-		cur = it;
-	
-	}
-	if( flag == true)
-		break;
-		
- }
+ 
 	
 	PrintRezult( listInput, order, dis, cost);
 	
@@ -347,28 +329,26 @@ void CLOOK( set<int> s )
 	cout << "\n\nCLOOK:\n";
 	init();
 		
-	set<int>::iterator base = s.find( listInput[0] );
-	order.push_back( *base );
+	set<int>::iterator cur = s.find( listInput[0] );
+	order.push_back( *cur );
+	set<int>::iterator initial = prev( cur, 1 );
 	
-	set<int>::iterator cur = base;
-	for( set<int>::iterator it = next(base,1); it != s.end(); it++ )
+	while( s.size() != 1)
 	{
-		int now = *it;
-		order.push_back( now );
-		int d =  abs(now - *cur);
-		dis.push_back( d );
-		cost += d;
-		cur = it;
-	}
-	
-	for( set<int>::iterator it = s.begin(); it != base ; it++ )
-	{
-		int now = *it;
-		order.push_back( now );
-		int d = abs(*cur - now);
-		dis.push_back( d );
-		cost+=d;
-		cur = it;
+		for(set<int>::iterator it = initial; it != --s.begin(); it --)
+		{
+			int now = *it;
+			int d = abs(now - *cur);
+			order.push_back(now);
+			dis.push_back(d);
+			cost+=d;
+		
+			s.erase(cur);
+			cur = it;
+		}
+		if( s.size() == 1)
+			break;
+		initial = prev(s.end(),1);
 	}
 	
 	PrintRezult( listInput, order, dis, cost );
@@ -389,9 +369,8 @@ int main()
 	SSTF( s );
 	SCAN( s );
 	CSCAN( s );
-
-//	LOOK ( s );
-//	CLOOK (	s );
+	LOOK ( s );
+	CLOOK (	s );
 
  printf("\n\nHello World\n");
  return 0;
