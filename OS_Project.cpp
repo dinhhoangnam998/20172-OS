@@ -1,14 +1,14 @@
 #include <stdio.h>
+#include <conio.h>
 #include <iostream>
 #include <fstream>
 
 #include <vector>
 #include <queue>
 #include <set>
+#include <string>
 
 #include <math.h>
-
-#define MAX 199 // max value of cylinder
 
 using namespace std;
 
@@ -19,6 +19,7 @@ vector<int> dis;  		   	// distance
 vector<int> order; 			// order
 int cost; 					// sum cost
 vector<int> listInput;		// print Input
+int max_cld;
 
 void ReadData()
 {
@@ -34,9 +35,9 @@ void ReadData()
 
 }
 
-void ReadData(char* filename)
+void ReadData(string filename)
 {
-	cout << "Reading Data from file...  ";
+	cout << "    Reading data from file...  ";
 	ifstream f (filename);
 
 	int cld; f >> cld;
@@ -205,7 +206,7 @@ void SCAN ( set<int> s  ) //version update
 		break;
 	
 	
-	s.insert(MAX);
+	s.insert( max_cld );
 	initial = next( cur, 1);
 	for(set<int>::iterator it = initial; it != s.end(); it++)
 	{
@@ -271,7 +272,7 @@ void CSCAN(set<int> s) //?????
 		if( flag == true)
 			break;
 		
-		s.insert(MAX);
+		s.insert( max_cld );
 		initial = --s.end();
 	}
 	
@@ -355,24 +356,88 @@ void CLOOK( set<int> s )
 	
 }
 
+void Greeting()
+{
+	printf("De tai 17: Chuong trinh minh hoa cho cac giai thuat quan ly truy cap dia tu.");
+	printf("\n\nInput:");
+	printf("\n -danh sach cac cylinders can truy cap (tu keyboard hoac file)");
+	printf("\n -gia tri lon nhat co the cua cylinder (max_cld)");
+	printf("\nOutput:");
+	printf("\n -thu tu cac cylinders duoc truy nhap (Order)");
+	printf("\n -chi phi cua moi step (Cost)");
+	printf("\n -tong chi phi theo thuat toan (Sum of cost)");
+	printf("\n\nNote:");
+	printf("\n -danh sach cylinders nhap tu keyboard hoac file can ket thuc boi -1");
+	printf("\n -user co the insert them cylinders sau moi step");
+	printf("\n -mot vai thuat toan co the se output them danh sach cac cylinder theo\n  thu tu \
+tang dan de tien theo doi");
+}
 
+void SelectInput()
+{
+	printf("\n\nInput danh sach cylinders:\n 1. keyboard\n 2. file\n");
+	printf("  your selection: ");
+	
+	int x; cin >> x;
+	switch( x )
+	{
+		case 1: 
+		{
+			ReadData();
+		} break;
+		
+		case 2: 
+		{
+			cout << "    input file name: ";
+			string s; cin >> s; 
+			ReadData( s );
+		} break;
+	}
+	
+	printf("\n\nInput max_cld = ");
+	cin >> max_cld;
+}
 
-
+void PrintMenu()
+{
+	
+	int x; 
+	char ch;
+	
+	do
+	{
+		printf("\n\n=== Lua chon thuat toan ===");
+		printf("\n1.FCFS\n2.SSTF\n3.SCAN\n4.CSCAN\n5.LOOK\n6.CLOOK\n7.all");
+		printf("\n your selection: "); cin >> x;
+		
+		switch ( x )
+		{
+			case 1: FCFS( Q ); break;
+			case 2: SSTF( s ); break;
+			case 3: SCAN( s ); break;
+			case 4: CSCAN( s ); break;
+			case 5: LOOK( s ); break;
+			case 6: CLOOK( s ); break;
+			case 7: { FCFS( Q ); SSTF( s ); SCAN( s ); CSCAN( s ); LOOK( s ); CLOOK( s ); } break;
+		}
+		
+		printf("\n\nDo you want to try more? (y/n) ");
+		 cin >> ch;
+	}while( ch == 'y');
+		
+		
+		printf("\nPress any keys to exit..."); getch();
+	
+}
 
 
 
 int main()
 {
-//	ReadData();
-	ReadData( "Input.txt" );
-	FCFS( Q );
-	SSTF( s );
-	SCAN( s );
-	CSCAN( s );
-	LOOK ( s );
-	CLOOK (	s );
+	Greeting();
+	SelectInput();
+	PrintMenu();
 
- printf("\n\nHello World\n");
  return 0;
 }
 
