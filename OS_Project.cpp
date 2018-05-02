@@ -170,39 +170,67 @@ void SSTF( set<int> s )
 	PrintRezult( listInput, order, dis, cost );
 }
 
-void SCAN( set<int> s )
+void SCAN ( set<int> s  ) //version update
 {
 	cout << "\n\nSCAN:\n";
 	init();
 	
-	s.insert(0);
+	set<int>::iterator cur = s.find( listInput[0] );
+	order.push_back(*cur);
+	bool flag = false;
 	
-	set<int>::iterator base = s.find( listInput[0] );
-	order.push_back( *base );
-	
-	set<int>::iterator cur = base;
-	for( set<int>::iterator it = prev(base,1); it != prev( s.begin() ); it-- )
+ while(1)
+ {
+ 	s.insert(0);
+	set<int>::iterator initial = prev(cur,1);
+	for(set<int>::iterator it = initial; it != --s.begin(); it--)
 	{
+		if( s.size() == 2)
+		{
+			flag = true;
+			break;
+		}
+		
 		int now = *it;
-		order.push_back( now );
 		int d = *cur - now;
-		dis.push_back( d );
+		order.push_back(now);
+		dis.push_back(d);
 		cost+=d;
+		
+		s.erase(cur);
 		cur = it;
 	}
+	if( flag == true)
+		break;
 	
-
-	for( set<int>::iterator it = next(base,1); it != s.end(); it++ )
+	
+	s.insert(MAX);
+	initial = next( cur, 1);
+	for(set<int>::iterator it = initial; it != s.end(); it++)
 	{
+		if( s.size() == 2)
+		{
+			flag = true;
+			break;
+		}
+			
 		int now = *it;
-		order.push_back( now );
-		int d =  now - *cur;
-		dis.push_back( d );
-		cost += d;
+		int d = now - *cur;
+		order.push_back(now);
+		dis.push_back(d);
+		cost+=d;
+		
+		s.erase(cur);
 		cur = it;
-	}
 	
-	PrintRezult( listInput, order, dis, cost );
+	}
+	if( flag == true)
+		break;
+		
+ }
+	
+	PrintRezult( listInput, order, dis, cost);
+	
 	
 }
 
@@ -344,6 +372,8 @@ void CLOOK( set<int> s )
 	PrintRezult( listInput, order, dis, cost );
 	
 }
+
+
 
 
 
