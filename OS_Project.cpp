@@ -170,6 +170,7 @@ void SSTF( set<int> s )
 	PrintRezult( listInput, order, dis, cost );
 }
 
+
 void SCAN ( set<int> s  ) //version update
 {
 	cout << "\n\nSCAN:\n";
@@ -234,75 +235,46 @@ void SCAN ( set<int> s  ) //version update
 	
 }
 
-//void CSCAN( set<int> s )
-//{
-//	cout << "\n\nCSCAN:\n";
-//	init();
-//	
-//	s.insert(0);
-//	s.insert(199);
-//	
-//	set<int>::iterator first = s.find( listInput[0] ); order.push_back( *first );
-//	
-//	set<int>::iterator initial = next(first,1);
-//	int cur = *first;
-//	s.erase( first );
-//	
-//	while( !s.empty() )
-//	{
-//		for( set<int>::iterator it = initial; it != s.end(); it++  )
-//		{
-//			set<int>::iterator temp = it;
-//			int now = *it;
-//			int d = abs( now - cur );
-//			order.push_back( now );
-//			dis.push_back( d );
-//			cost+=d;
-//			
-//			cur = now; s.erase( temp );
-//		}
-//		initial = s.begin();		
-//	}
-//	
-//	PrintRezult( listInput, order, dis, cost );
-//	
-//}
 
 
-void CSCAN( set<int> s )
+void CSCAN(set<int> s)
 {
-	cout << "\n\nCSCAN:\n";
+	cout <<"\n\nCSCAN:\n";
 	init();
 	
-	s.insert(0);
-	s.insert(MAX);
-	
-	set<int>::iterator base = s.find( listInput[0] );
-	order.push_back( *base );
-	
-	set<int>::iterator cur = base;
-	for( set<int>::iterator it = next(base,1); it != s.end(); it++ )
+	set<int>::iterator cur = s.find( listInput[0] );
+	order.push_back( *cur );
+	set<int>::iterator initial = prev(cur,1);
+	bool flag = false;
+	while(1)
 	{
-		int now = *it;
-		order.push_back( now );
-		int d =  abs(now - *cur);
-		dis.push_back( d );
-		cost += d;
-		cur = it;
+		s.insert(0);
+		for(set<int>::iterator it = initial; it != --s.begin(); it--)
+		{
+			if( s.size() == 2)
+			{
+				flag = true;
+				break;
+			}
+			
+			int now = *it;
+			int d = abs(*cur - now);
+			order.push_back(now);
+			dis.push_back(d);
+			cost+=d;
+			
+			s.erase( cur );
+			cur = it;
+		}
+		
+		if( flag == true)
+			break;
+		
+		s.insert(MAX);
+		initial = --s.end();
 	}
 	
-	for( set<int>::iterator it = s.begin(); it != base ; it++ )
-	{
-		int now = *it;
-		order.push_back( now );
-		int d = abs(*cur - now);
-		dis.push_back( d );
-		cost+=d;
-		cur = it;
-	}
-	
-	PrintRezult( listInput, order, dis, cost );
-	
+	PrintRezult( listInput, order, dis, cost);
 }
 
 
@@ -386,9 +358,9 @@ int main()
 //	FCFS( Q );
 //	SSTF( s );
 //	SCAN( s );
-//	CSCAN( s );
+	CSCAN( s );
 //	LOOK ( s );
-	CLOOK (	s );
+//	CLOOK (	s );
 
  printf("\n\nHello World\n");
  return 0;
