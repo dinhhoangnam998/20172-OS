@@ -13,13 +13,17 @@
 using namespace std;
 
 
-queue<int> Q;
-set<int> s;
-vector<int> dis;  		   	// distance
+queue<int> myQ;
+set<int> mys;
+vector<int> mylistInput;		// print Input
+
 vector<int> order; 			// order
+vector<int> dis;  		   	// distance
 int cost; 					// sum cost
-vector<int> listInput;		// print Input
+
 int max_cld;
+bool flag_insert = false;
+int count;
 
 void ReadData()
 {
@@ -27,9 +31,9 @@ void ReadData()
 	int cld; cin >> cld;
 	while( cld != -1 )
 	{
-		Q.push(cld);
-		s.insert(cld);
-		listInput.push_back(cld);
+		myQ.push(cld);
+		mys.insert(cld);
+		mylistInput.push_back(cld);
 		cin >> cld;
 	} 
 
@@ -43,9 +47,9 @@ void ReadData(string filename)
 	int cld; f >> cld;
 	while( cld != -1 )
 	{
-		Q.push(cld);
-		s.insert(cld);
-		listInput.push_back(cld);
+		myQ.push(cld);
+		mys.insert(cld);
+		mylistInput.push_back(cld);
 		f >> cld;
 	}
 	
@@ -59,15 +63,18 @@ void init()
 	cost = 0;
 	dis.clear();
 	order.clear();
+	flag_insert = false;
+	count = 0;
+	
 	
 }
 
-void PrintRezult ( vector<int> listInput, vector<int> order, vector<int> dis, int cost  )
+void PrintResult ( vector<int> dsInput, vector<int> order, vector<int> dis, int cost  )
 {
-	
+	cout << "\n\nOutput:\n";
 	cout << " Input: ";
-	for(int i = 0; i <= listInput.size() -1 ; i++ )
-		cout << listInput[i] << "   ";
+	for(int i = 0; i <= dsInput.size() -1 ; i++ )
+		cout << dsInput[i] << "   ";
 	
 	cout << "\n Order: ";
 	for( int i = 0; i <= order.size() - 2; i++)
@@ -81,16 +88,83 @@ void PrintRezult ( vector<int> listInput, vector<int> order, vector<int> dis, in
 	cout << "\n Sum of cost: " << cost;
 }
 
-void FCFS( queue<int> Q )
+
+
+void InsertToSet( set<int>& s, vector<int>& dsInput )
+{
+	
+	
+	if( flag_insert == false)
+	{
+		cout << "\nStep: " << ++count << endl;
+		for( int i = 0; i <= order.size() - 1; i++)
+		{
+		cout << order[i] << " --> ";
+		}
+		
+		
+		
+		cout << "\nDo you want to insert cylinders? (y/n)  (c to cancle, no more insert) ";
+		char ch; cin >> ch;
+		
+		if( ch == 'y' )
+		{
+			cout << "\nInput cylinders want to access (Enter -1 to end): "; 
+			int cld; cin >> cld;
+			while( cld != -1 )
+			{
+				s.insert(cld);
+				dsInput.push_back(cld);
+				cin >> cld;
+			}
+			
+
+		}
+				
+		else if( ch == 'c')
+			flag_insert = true;
+	}
+}
+
+void InsertToQueue( queue<int>& Q, vector<int>& dsInput )
+{
+	
+	if( flag_insert == false)
+	{
+		
+		cout << "\nStep: " << ++count << endl;
+		for( int i = 0; i <= order.size() - 1; i++)
+		{
+		cout << order[i] << " --> ";
+		}
+		
+		cout << "\nDo you want to insert cylinders? (y/n)  (c to cancle, no more insert) ";
+		char ch; cin >> ch;
+		
+		if( ch == 'y' )
+		{		
+			cout << "\nInput cylinders want to access (Enter -1 to end): "; 
+			int cld; cin >> cld;
+			while( cld != -1 )
+			{
+				Q.push(cld);
+				dsInput.push_back(cld);
+				cin >> cld;
+			}					
+		}
+		
+		else if( ch == 'c')
+			flag_insert = true;
+	}
+}
+
+void FCFS( queue<int> Q, vector<int> dsInput )
 {
 	init();
 	cout << "\n\nFCFS:\n";
 	int cur = Q.front(); Q.pop();
 	order.push_back(cur);
 	
-	bool flag = false;
-	char ch; 
-
 	while( !Q.empty() )
 	{
 		int cld = Q.front(); Q.pop();
@@ -98,19 +172,21 @@ void FCFS( queue<int> Q )
 		int d = abs( cld - cur );
 		dis.push_back( d );
 		cur = cld;
-		cost += d;		
+		cost += d;
+		
+		InsertToQueue(Q, dsInput);		
 	}
-	PrintRezult( listInput, order, dis, cost );
+	PrintResult( dsInput, order, dis, cost );
 	
 
 }
 
 
-void SSTF( set<int> s )
+void SSTF( set<int> s, vector<int> dsInput )
 {
 	init();
 	cout << "\n\nSSTF:\n";
-	set<int>::iterator cur = s.find( listInput[0] ); order.push_back(*cur);
+	set<int>::iterator cur = s.find( dsInput[0] ); order.push_back(*cur);
 	int d, d_pre, d_post;
 	
 	while( s.size() != 1 )
@@ -150,6 +226,7 @@ void SSTF( set<int> s )
 			{
 				order.push_back( *pre );
 				dis.push_back( d_pre );
+
 				cost += d_pre;
 				
 				s.erase ( cur );
@@ -164,27 +241,32 @@ void SSTF( set<int> s )
 				s.erase( cur );
 				cur = post;
 			}
-		}	
+		}
+		
+		InsertToSet( s, dsInput);	
 				
 	}
 	
-	PrintRezult( listInput, order, dis, cost );
+	PrintResult( dsInput, order, dis, cost );
 }
 
 
-void SCAN ( set<int> s  ) //version update
+void SCAN ( set<int> s, vector<int> dsInput  ) 
 {
 	cout << "\n\nSCAN:\n";
 	init();
 	
-	set<int>::iterator cur = s.find( listInput[0] );
+	set<int>::iterator cur = s.find( dsInput[0] );
 	order.push_back(*cur);
 	bool flag = false;
 	
  while(1)
  {
+	InsertToSet( s, dsInput);
+	
  	s.insert(0);
 	set<int>::iterator initial = prev(cur,1);
+	
 	for(set<int>::iterator it = initial; it != --s.begin(); it--)
 	{
 		if( s.size() == 2)
@@ -231,19 +313,19 @@ void SCAN ( set<int> s  ) //version update
 		
  }
 	
-	PrintRezult( listInput, order, dis, cost);
+	PrintResult( dsInput, order, dis, cost);
 	
 	
 }
 
 
 
-void CSCAN(set<int> s) //?????
+void CSCAN(set<int> s, vector<int> dsInput) 
 {
 	cout <<"\n\nCSCAN:\n";
 	init();
 	
-	set<int>::iterator cur = s.find( listInput[0] );
+	set<int>::iterator cur = s.find( dsInput[0] );
 	order.push_back( *cur );
 	set<int>::iterator initial = prev(cur,1);
 	bool flag = false;
@@ -276,16 +358,16 @@ void CSCAN(set<int> s) //?????
 		initial = --s.end();
 	}
 	
-	PrintRezult( listInput, order, dis, cost);
+	PrintResult( dsInput, order, dis, cost);
 }
 
 
-void LOOK( set<int> s )
+void LOOK( set<int> s, vector<int> dsInput )
 {
 	cout << "\n\nLOOK:\n";
 	init();
 	
-	set<int>::iterator cur = s.find( listInput[0] );
+	set<int>::iterator cur = s.find( dsInput[0] );
 	order.push_back(*cur);
 	
 	while ( s.size() != 1 )
@@ -320,17 +402,17 @@ void LOOK( set<int> s )
 	}
  
 	
-	PrintRezult( listInput, order, dis, cost);
+	PrintResult( dsInput, order, dis, cost);
 	
 	
 }
 
-void CLOOK( set<int> s )
+void CLOOK( set<int> s, vector<int> dsInput )
 {
 	cout << "\n\nCLOOK:\n";
 	init();
 		
-	set<int>::iterator cur = s.find( listInput[0] );
+	set<int>::iterator cur = s.find( dsInput[0] );
 	order.push_back( *cur );
 	set<int>::iterator initial = prev( cur, 1 );
 	
@@ -352,16 +434,17 @@ void CLOOK( set<int> s )
 		initial = prev(s.end(),1);
 	}
 	
-	PrintRezult( listInput, order, dis, cost );
+	PrintResult( dsInput, order, dis, cost );
 	
 }
+
 
 void Greeting()
 {
 	printf("De tai 17: Chuong trinh minh hoa cho cac giai thuat quan ly truy cap dia tu.");
 	printf("\n\nInput:");
 	printf("\n -danh sach cac cylinders can truy cap (tu keyboard hoac file)");
-	printf("\n -gia tri lon nhat co the cua cylinder (max_cld)");
+	printf("\n -gia tri max cua cylinder (gia tri cylinder o trong cung dia tu) (max_cld)");
 	printf("\nOutput:");
 	printf("\n -thu tu cac cylinders duoc truy nhap (Order)");
 	printf("\n -chi phi cua moi step (Cost)");
@@ -412,13 +495,13 @@ void PrintMenu()
 		
 		switch ( x )
 		{
-			case 1: FCFS( Q ); break;
-			case 2: SSTF( s ); break;
-			case 3: SCAN( s ); break;
-			case 4: CSCAN( s ); break;
-			case 5: LOOK( s ); break;
-			case 6: CLOOK( s ); break;
-			case 7: { FCFS( Q ); SSTF( s ); SCAN( s ); CSCAN( s ); LOOK( s ); CLOOK( s ); } break;
+			case 1: FCFS( myQ, mylistInput ); break;
+			case 2: SSTF( mys, mylistInput ); break;
+			case 3: SCAN( mys, mylistInput ); break;
+			case 4: CSCAN( mys, mylistInput ); break;
+			case 5: LOOK( mys, mylistInput ); break;
+			case 6: CLOOK( mys, mylistInput ); break;
+			case 7: { FCFS( myQ, mylistInput ); SSTF( mys, mylistInput ); SCAN( mys, mylistInput ); CSCAN( mys, mylistInput ); LOOK( mys, mylistInput ); CLOOK( mys, mylistInput ); } break;
 		}
 		
 		printf("\n\nDo you want to try more? (y/n) ");
