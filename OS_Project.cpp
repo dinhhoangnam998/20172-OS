@@ -16,12 +16,12 @@ using namespace std;
 queue<int> myQ;
 set<int> mys;
 vector<int> mylistInput;		// print Input
+int max_cld;
 
 vector<int> order; 			// order
 vector<int> dis;  		   	// distance
 int cost; 					// sum cost
 
-int max_cld;
 bool flag_insert = false;
 int count;
 
@@ -69,9 +69,9 @@ void init()
 	
 }
 
-void PrintResult ( vector<int> dsInput, vector<int> order, vector<int> dis, int cost  )
+void PrintResult ( vector<int> dsInput )
 {
-	cout << "\n\nOutput:\n";
+	cout << "\n\n*** Output ***\n";
 	cout << " Input: ";
 	for(int i = 0; i <= dsInput.size() -1 ; i++ )
 		cout << dsInput[i] << "   ";
@@ -89,61 +89,55 @@ void PrintResult ( vector<int> dsInput, vector<int> order, vector<int> dis, int 
 }
 
 
-
-void InsertToSet( set<int>& s, vector<int>& dsInput )
+void PrintStepWithQueue( queue<int> Q )
 {
-	
-	
-	if( flag_insert == false)
-	{
-		cout << "\nStep: " << ++count << endl;
-		for( int i = 0; i <= order.size() - 1; i++)
-		{
-		cout << order[i] << " --> ";
-		}
-		
-		
-		
-		cout << "\nDo you want to insert cylinders? (y/n)  (c to cancle, no more insert) ";
-		char ch; cin >> ch;
-		
-		if( ch == 'y' )
-		{
-			cout << "\nInput cylinders want to access (Enter -1 to end): "; 
-			int cld; cin >> cld;
-			while( cld != -1 )
-			{
-				s.insert(cld);
-				dsInput.push_back(cld);
-				cin >> cld;
-			}
-			
 
-		}
-				
-		else if( ch == 'c')
-			flag_insert = true;
+	cout << "\n--Step " << ++count << "--" << endl;
+	
+	cout << "  Order:";
+	for( int i = 0; i <= order.size() - 1; i++)
+	{
+	cout <<"  " << order[i] << " --> ";
 	}
+	
+
+	cout << "\n  Queue:";
+	while( !Q.empty() )
+	{
+		cout << "  " << Q.front(); 
+		Q.pop();
+	}
+	
+}
+
+void PrintStepWithSet( set<int> s )
+{
+	cout << "\n--Step " << ++count << "--"<< endl;
+	cout << "  Order:";
+	for( int i = 0; i <= order.size() - 1; i++)
+	{
+	cout <<"  " << order[i] << " --> ";
+	}
+	cout << "\n  Set:";
+	
+	for(set<int>::iterator it = s.begin(); it != s.end(); it++)
+		cout << "  " << *it;
+	
 }
 
 void InsertToQueue( queue<int>& Q, vector<int>& dsInput )
 {
 	
 	if( flag_insert == false)
-	{
-		
-		cout << "\nStep: " << ++count << endl;
-		for( int i = 0; i <= order.size() - 1; i++)
-		{
-		cout << order[i] << " --> ";
-		}
+	{		
+		PrintStepWithQueue( Q );
 		
 		cout << "\nDo you want to insert cylinders? (y/n)  (c to cancle, no more insert) ";
 		char ch; cin >> ch;
 		
 		if( ch == 'y' )
 		{		
-			cout << "\nInput cylinders want to access (Enter -1 to end): "; 
+			cout << "\n --> Input cylinders want to access (Enter -1 to end): "; 
 			int cld; cin >> cld;
 			while( cld != -1 )
 			{
@@ -157,6 +151,35 @@ void InsertToQueue( queue<int>& Q, vector<int>& dsInput )
 			flag_insert = true;
 	}
 }
+
+void InsertToSet( set<int>& s, vector<int>& dsInput )
+{	
+	
+	if( flag_insert == false)
+	{
+		PrintStepWithSet( s );
+		
+		cout << "\nDo you want to insert cylinders? (y/n)  (c to cancle, no more insert) ";
+		char ch; cin >> ch;
+		
+		if( ch == 'y' )
+		{
+			cout << "\n --> Input cylinders want to access (Enter -1 to end): "; 
+			int cld; cin >> cld;
+			while( cld != -1 )
+			{
+				s.insert(cld);
+				dsInput.push_back(cld);
+				cin >> cld;
+			}			
+
+		}
+				
+		else if( ch == 'c')
+			flag_insert = true;
+	}
+}
+
 
 void FCFS( queue<int> Q, vector<int> dsInput )
 {
@@ -176,9 +199,8 @@ void FCFS( queue<int> Q, vector<int> dsInput )
 		
 		InsertToQueue(Q, dsInput);		
 	}
-	PrintResult( dsInput, order, dis, cost );
 	
-
+	PrintResult( dsInput );
 }
 
 
@@ -190,8 +212,7 @@ void SSTF( set<int> s, vector<int> dsInput )
 	int d, d_pre, d_post;
 	
 	while( s.size() != 1 )
-	{
-		
+	{		
 		if( cur == s.begin() && cur != --s.end() )
 		{
 			set<int>::iterator post = next(cur,1);
@@ -247,7 +268,7 @@ void SSTF( set<int> s, vector<int> dsInput )
 				
 	}
 	
-	PrintResult( dsInput, order, dis, cost );
+	PrintResult( dsInput );
 }
 
 
@@ -262,13 +283,15 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 	
  while(1)
  {
-	InsertToSet( s, dsInput);
+	
 	
  	s.insert(0);
 	set<int>::iterator initial = prev(cur,1);
 	
 	for(set<int>::iterator it = initial; it != --s.begin(); it--)
-	{
+	{	
+		InsertToSet( s, dsInput);
+		
 		if( s.size() == 2)
 		{
 			flag = true;
@@ -282,7 +305,8 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 		cost+=d;
 		
 		s.erase(cur);
-		cur = it;
+		cur = it;		
+		
 	}
 	if( flag == true)
 		break;
@@ -292,6 +316,8 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 	initial = next( cur, 1);
 	for(set<int>::iterator it = initial; it != s.end(); it++)
 	{
+		InsertToSet( s, dsInput);
+	
 		if( s.size() == 2)
 		{
 			flag = true;
@@ -311,11 +337,9 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 	if( flag == true)
 		break;
 		
- }
-	
-	PrintResult( dsInput, order, dis, cost);
-	
-	
+ }	
+ 
+ PrintResult( dsInput );	
 }
 
 
@@ -358,7 +382,7 @@ void CSCAN(set<int> s, vector<int> dsInput)
 		initial = --s.end();
 	}
 	
-	PrintResult( dsInput, order, dis, cost);
+	PrintResult( dsInput );
 }
 
 
@@ -400,11 +424,8 @@ void LOOK( set<int> s, vector<int> dsInput )
 		}
 		
 	}
- 
-	
-	PrintResult( dsInput, order, dis, cost);
-	
-	
+ 	
+	PrintResult( dsInput );
 }
 
 void CLOOK( set<int> s, vector<int> dsInput )
@@ -434,8 +455,7 @@ void CLOOK( set<int> s, vector<int> dsInput )
 		initial = prev(s.end(),1);
 	}
 	
-	PrintResult( dsInput, order, dis, cost );
-	
+	PrintResult( dsInput );	
 }
 
 
@@ -444,7 +464,7 @@ void Greeting()
 	printf("De tai 17: Chuong trinh minh hoa cho cac giai thuat quan ly truy cap dia tu.");
 	printf("\n\nInput:");
 	printf("\n -danh sach cac cylinders can truy cap (tu keyboard hoac file)");
-	printf("\n -gia tri max cua cylinder (gia tri cylinder o trong cung dia tu) (max_cld)");
+	printf("\n -gia tri max cua cylinder (max_cld) (thuat toan SCAN, CSCAN need input max_cld)");
 	printf("\nOutput:");
 	printf("\n -thu tu cac cylinders duoc truy nhap (Order)");
 	printf("\n -chi phi cua moi step (Cost)");
@@ -452,8 +472,7 @@ void Greeting()
 	printf("\n\nNote:");
 	printf("\n -danh sach cylinders nhap tu keyboard hoac file can ket thuc boi -1");
 	printf("\n -user co the insert them cylinders sau moi step");
-	printf("\n -mot vai thuat toan co the se output them danh sach cac cylinder theo\n  thu tu \
-tang dan de tien theo doi");
+	printf("\n -mot vai thuat toan se output them danh sach cac cylinder da sap xep (Sort)");
 }
 
 void SelectInput()
@@ -477,8 +496,9 @@ void SelectInput()
 		} break;
 	}
 	
-	printf("\n\nInput max_cld = ");
+	printf("Input max_cld = ");
 	cin >> max_cld;
+
 }
 
 void PrintMenu()
@@ -489,8 +509,8 @@ void PrintMenu()
 	
 	do
 	{
-		printf("\n\n=== Lua chon thuat toan ===");
-		printf("\n1.FCFS\n2.SSTF\n3.SCAN\n4.CSCAN\n5.LOOK\n6.CLOOK\n7.all");
+		printf("\n=== Menu ===");
+		printf("\n1. FCFS\n2. SSTF\n3. SCAN\n4. CSCAN\n5. LOOK\n6. CLOOK\n7. all");
 		printf("\n your selection: "); cin >> x;
 		
 		switch ( x )
