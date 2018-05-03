@@ -41,7 +41,7 @@ void ReadData()
 
 void ReadData(string filename)
 {
-	cout << "    Reading data from file...  ";
+	cout << "     Reading data from file...  ";
 	ifstream f (filename);
 
 	int cld; f >> cld;
@@ -53,7 +53,7 @@ void ReadData(string filename)
 		f >> cld;
 	}
 	
-	cout << "done!";
+	cout << "done!\n";
 }
 
 
@@ -71,7 +71,7 @@ void init()
 
 void PrintResult ( vector<int> dsInput )
 {
-	cout << "\n\n*** Output ***\n";
+	cout << "\n*** Output ***\n";
 	cout << " Input: ";
 	for(int i = 0; i <= dsInput.size() -1 ; i++ )
 		cout << dsInput[i] << "   ";
@@ -100,7 +100,6 @@ void PrintStepWithQueue( queue<int> Q )
 	cout <<"  " << order[i] << " --> ";
 	}
 	
-
 	cout << "\n  Queue:";
 	while( !Q.empty() )
 	{
@@ -137,14 +136,14 @@ void InsertToQueue( queue<int>& Q, vector<int>& dsInput )
 		
 		if( ch == 'y' )
 		{		
-			cout << "\n --> Input cylinders want to access (Enter -1 to end): "; 
+			cout << "====> Input cylinders want to access (Enter -1 to end): "; 
 			int cld; cin >> cld;
 			while( cld != -1 )
 			{
 				Q.push(cld);
 				dsInput.push_back(cld);
 				cin >> cld;
-			}					
+			}				
 		}
 		
 		else if( ch == 'c')
@@ -164,15 +163,15 @@ void InsertToSet( set<int>& s, vector<int>& dsInput )
 		
 		if( ch == 'y' )
 		{
-			cout << "\n --> Input cylinders want to access (Enter -1 to end): "; 
+			cout << "====> Input cylinders want to access (Enter -1 to end): "; 
 			int cld; cin >> cld;
 			while( cld != -1 )
 			{
 				s.insert(cld);
 				dsInput.push_back(cld);
 				cin >> cld;
-			}			
-
+			}
+			
 		}
 				
 		else if( ch == 'c')
@@ -290,7 +289,6 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 	
 	for(set<int>::iterator it = initial; it != --s.begin(); it--)
 	{	
-		InsertToSet( s, dsInput);
 		
 		if( s.size() == 2)
 		{
@@ -307,6 +305,7 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 		s.erase(cur);
 		cur = it;		
 		
+		InsertToSet( s, dsInput);
 	}
 	if( flag == true)
 		break;
@@ -316,7 +315,6 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 	initial = next( cur, 1);
 	for(set<int>::iterator it = initial; it != s.end(); it++)
 	{
-		InsertToSet( s, dsInput);
 	
 		if( s.size() == 2)
 		{
@@ -333,6 +331,7 @@ void SCAN ( set<int> s, vector<int> dsInput  )
 		s.erase(cur);
 		cur = it;
 	
+		InsertToSet( s, dsInput);
 	}
 	if( flag == true)
 		break;
@@ -372,7 +371,9 @@ void CSCAN(set<int> s, vector<int> dsInput)
 			
 			s.erase( cur );
 			cur = it;
-			s.insert(0);			
+			s.insert(0);
+			
+			InsertToSet( s, dsInput);			
 		}
 		
 		if( flag == true)
@@ -406,7 +407,9 @@ void LOOK( set<int> s, vector<int> dsInput )
 			cost+=d;
 		
 			s.erase(cur);
-			cur = it;	
+			cur = it;
+			
+			InsertToSet( s, dsInput);	
 		}
 		if( s.size() == 1 )
 			break;
@@ -421,6 +424,8 @@ void LOOK( set<int> s, vector<int> dsInput )
 		
 			s.erase(cur);
 			cur = it;
+			
+			InsertToSet( s, dsInput);
 		}
 		
 	}
@@ -449,6 +454,7 @@ void CLOOK( set<int> s, vector<int> dsInput )
 		
 			s.erase(cur);
 			cur = it;
+			InsertToSet( s, dsInput);
 		}
 		if( s.size() == 1)
 			break;
@@ -464,7 +470,7 @@ void Greeting()
 	printf("De tai 17: Chuong trinh minh hoa cho cac giai thuat quan ly truy cap dia tu.");
 	printf("\n\nInput:");
 	printf("\n -danh sach cac cylinders can truy cap (tu keyboard hoac file)");
-	printf("\n -gia tri max cua cylinder (max_cld) (thuat toan SCAN, CSCAN need input max_cld)");
+	printf("\n -gia tri max cua cylinder (max_cld) (SCAN, CSCAN algorithm need input max_cld)");
 	printf("\nOutput:");
 	printf("\n -thu tu cac cylinders duoc truy nhap (Order)");
 	printf("\n -chi phi cua moi step (Cost)");
@@ -472,7 +478,7 @@ void Greeting()
 	printf("\n\nNote:");
 	printf("\n -danh sach cylinders nhap tu keyboard hoac file can ket thuc boi -1");
 	printf("\n -user co the insert them cylinders sau moi step");
-	printf("\n -mot vai thuat toan se output them danh sach cac cylinder da sap xep (Sort)");
+	printf("\n -cac thuat toan co the output them mot so thong tin phu");
 }
 
 void SelectInput()
@@ -511,7 +517,8 @@ void PrintMenu()
 	{
 		printf("\n=== Menu ===");
 		printf("\n1. FCFS\n2. SSTF\n3. SCAN\n4. CSCAN\n5. LOOK\n6. CLOOK\n7. all");
-		printf("\n your selection: "); cin >> x;
+		printf("\n your selection: "); 
+		cin >> x;
 		
 		switch ( x )
 		{
@@ -524,7 +531,7 @@ void PrintMenu()
 			case 7: { FCFS( myQ, mylistInput ); SSTF( mys, mylistInput ); SCAN( mys, mylistInput ); CSCAN( mys, mylistInput ); LOOK( mys, mylistInput ); CLOOK( mys, mylistInput ); } break;
 		}
 		
-		printf("\n\nDo you want to try more? (y/n) ");
+		printf("\n\nDo you want to start menu again? (y/n) ");
 		 cin >> ch;
 	}while( ch == 'y');
 		
