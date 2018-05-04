@@ -12,7 +12,6 @@
 
 using namespace std;
 
-
 queue<int> myQ;
 set<int> mys;
 vector<int> mylistInput;		// print Input
@@ -36,7 +35,6 @@ void ReadData()
 		mylistInput.push_back(cld);
 		cin >> cld;
 	} 
-
 }
 
 void ReadData(string filename)
@@ -64,9 +62,7 @@ void init()
 	dis.clear();
 	order.clear();
 	flag_insert = false;
-	count = 0;
-	
-	
+	count = 0;	
 }
 
 void PrintResult ( vector<int> dsInput )
@@ -91,7 +87,6 @@ void PrintResult ( vector<int> dsInput )
 
 void PrintStepWithQueue( queue<int> Q )
 {
-
 	cout << "\n--Step " << ++count << "--" << endl;
 	
 	cout << "  Order:";
@@ -105,8 +100,7 @@ void PrintStepWithQueue( queue<int> Q )
 	{
 		cout << "  " << Q.front(); 
 		Q.pop();
-	}
-	
+	}	
 }
 
 void PrintStepWithSet( set<int> s )
@@ -120,13 +114,11 @@ void PrintStepWithSet( set<int> s )
 	cout << "\n  Set:";
 	
 	for(set<int>::iterator it = s.begin(); it != s.end(); it++)
-		cout << "  " << *it;
-	
+		cout << "  " << *it;	
 }
 
 void InsertToQueue( queue<int>& Q, vector<int>& dsInput )
-{
-	
+{	
 	if( flag_insert == false)
 	{		
 		PrintStepWithQueue( Q );
@@ -153,7 +145,6 @@ void InsertToQueue( queue<int>& Q, vector<int>& dsInput )
 
 void InsertToSet( set<int>& s, vector<int>& dsInput )
 {	
-	
 	if( flag_insert == false)
 	{
 		PrintStepWithSet( s );
@@ -504,12 +495,10 @@ void SelectInput()
 	
 	printf("Input max_cld = ");
 	cin >> max_cld;
-
 }
 
 void PrintMenu()
 {
-	
 	int x; 
 	char ch;
 	
@@ -534,10 +523,9 @@ void PrintMenu()
 		printf("\n\nDo you want to start menu again? (y/n) ");
 		 cin >> ch;
 	}while( ch == 'y');
-		
-		
-		printf("\nPress any keys to exit..."); getch();
-	
+		cout << "\nThank you very much!";
+		cout << "\nSV thuc hien:\n Dinh Hoang Nam      MSSV: 2016.2793\n Nguyen Huu Doanh    MSSV: 2016.0631";
+		printf("\nPress any keys to exit..."); getch();	
 }
 
 
